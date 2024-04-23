@@ -51,12 +51,14 @@ def check_direct(obj_direct:list) -> list[bool, bool]:
 
 def end():
     """
-    
+    ゲームオーバーになった時の処理を行う関数
+    未完成なので以下略
     """ 
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg") 
     screen.fill((0, 0, 0))
-    screen.set_alpha(128)
+    bg_img.set_alpha(128)
+    screen.blit(bg_img)
     print("Game Over")
     fonto = pg.font.Font(None, 80)
     txt = fonto.render("Game Over", True, (255, 255, 255))
