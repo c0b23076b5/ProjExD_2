@@ -26,27 +26,26 @@ def check_direct(obj_direct:list) -> list[bool, bool]:
     """
     移動する方向からこうか㌧の向いている方向を決定する関数
     引数：こうか㌧が移動する値のリスト
-    戻り値：角度8方向のうちのいずれか
+    戻り値：反転するか、方向
     """
-    dir = 0
-    direct = [0, 45, 90, 135, 180, 225, 270, 315]
+    dir = [0, 0]
     if obj_direct[0]==5 and obj_direct[1]==5:
-        dir = 3
+        dir = [1,1]
     if obj_direct[0]==5 and obj_direct[1]==0:
-        dir = 4
+        dir = [1,0]
     if obj_direct[0]==5 and obj_direct[1]==-5:
-        dir = 5
+        dir = [1,7]
     if obj_direct[0]==0 and obj_direct[1]==-5:
-        dir = 6
+        dir = [1,6]
     if obj_direct[0]==-5 and obj_direct[1]==-5:
-        dir = 7
+        dir = [0,7]
     if obj_direct[0]==-5 and obj_direct[1]==0:
-        dir = 0
+        dir = [0,0]
     if obj_direct[0]==-5 and obj_direct[1]==5:
-        dir = 1
+        dir = [0,1]
     if obj_direct[0]==0 and obj_direct[1]==5:
-        dir = 2
-    return direct[dir]
+        dir = [1,2]
+    return dir
 
 
 def main():
@@ -59,12 +58,14 @@ def main():
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     #ここから爆弾
-    bomb_img = pg.Surface((20, 20))
+    bomb_size = 10
+    bomb_img = pg.Surface((bomb_size, bomb_size))
     bomb_img.set_colorkey((0, 0, 0))
-    pg.draw.circle(bomb_img, (255, 0, 0), (10,10), 10)
+    pg.draw.circle(bomb_img, (255, 0, 0), (bomb_size, bomb_size), bomb_size)
     bomb_rct = bomb_img.get_rect()
     bomb_rct.center = random.randint(0,WIDTH), random.randint(0,HEIGHT)
     vx, vy = 5, 5
+    direct = [0, 45, 90, 135, 180, 225, 270, 315]
     
 
     clock = pg.time.Clock()
@@ -99,9 +100,13 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
-        kk_direct = check_direct(sum_mv)  # 方向を決める
+
+        kk_direct = direct[check_direct(sum_mv)[1]]
         kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), kk_direct, 2.0)
+        if check_direct(sum_mv)[0] == 1:
+            kk_img = pg.transform.flip(kk_img,True,False)
         screen.blit(kk_img, kk_rct)
+        pg.draw.circle(bomb_img, (255, 0, 0), (bomb_size, bomb_size), bomb_size)
         bomb_rct.move_ip(vx,vy)
         screen.blit(bomb_img,bomb_rct)
         yoko, tate = check_bound(bomb_rct)
