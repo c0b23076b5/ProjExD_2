@@ -52,7 +52,7 @@ def check_direct(obj_direct:list) -> list[bool, bool]:
 def end():
     """
     ゲームオーバーになった時の処理を行う関数
-    未完成なので以下略
+    未完成なので以下略です
     """ 
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     bg_img = pg.image.load("fig/pg_bg.jpg") 
