@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 import pygame as pg
 
@@ -14,6 +15,14 @@ def main():
     kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 2.0)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
+    #ここから爆弾
+    bomb_img = pg.Surface((20, 20))
+    bomb_img.set_colorkey((0, 0, 0))
+    pg.draw.circle(bomb_img, (255, 0, 0), (10,10), 10)
+    bomb_rct = bomb_img.get_rect()
+    bomb_rct.center = random.randint(0,WIDTH), random.randint(0,HEIGHT)
+    vx, vy = 5, 5
+
     clock = pg.time.Clock()
     tmr = 0
     move_dic = {  #移動量辞書
@@ -34,10 +43,11 @@ def main():
             if key_lst[k]:
                 sum_mv[0] += v[0]
                 sum_mv[1] += v[1]
-                print(k)
-                print(v)
+
         kk_rct.move_ip(sum_mv)
         screen.blit(kk_img, kk_rct)
+        bomb_rct.move_ip(vx,vy)
+        screen.blit(bomb_img,bomb_rct)
         pg.display.update()
         tmr += 1
         clock.tick(50)
