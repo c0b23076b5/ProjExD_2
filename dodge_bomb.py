@@ -22,12 +22,40 @@ def check_bound(obj_rct:pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+def check_direct(obj_direct:list) -> list[bool, bool]:
+    """
+    移動する方向からこうか㌧の向いている方向を決定する関数
+    引数：こうか㌧が移動する値のリスト
+    戻り値：角度8方向のうちのいずれか
+    """
+    dir = 0
+    direct = [0, 45, 90, 135, 180, 225, 270, 315]
+    if obj_direct[0]==5 and obj_direct[1]==5:
+        dir = 3
+    if obj_direct[0]==5 and obj_direct[1]==0:
+        dir = 4
+    if obj_direct[0]==5 and obj_direct[1]==-5:
+        dir = 5
+    if obj_direct[0]==0 and obj_direct[1]==-5:
+        dir = 6
+    if obj_direct[0]==-5 and obj_direct[1]==-5:
+        dir = 7
+    if obj_direct[0]==-5 and obj_direct[1]==0:
+        dir = 0
+    if obj_direct[0]==-5 and obj_direct[1]==5:
+        dir = 1
+    if obj_direct[0]==0 and obj_direct[1]==5:
+        dir = 2
+    return direct[dir]
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
     #ここからこうかとん
-    bg_img = pg.image.load("fig/pg_bg.jpg")    
-    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), 0, 2.0)
+    bg_img = pg.image.load("fig/pg_bg.jpg") 
+    kk_direct = 0   
+    kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), kk_direct, 2.0)
     kk_rct = kk_img.get_rect()
     kk_rct.center = 900, 400
     #ここから爆弾
@@ -37,6 +65,7 @@ def main():
     bomb_rct = bomb_img.get_rect()
     bomb_rct.center = random.randint(0,WIDTH), random.randint(0,HEIGHT)
     vx, vy = 5, 5
+    
 
     clock = pg.time.Clock()
     tmr = 0
@@ -70,6 +99,8 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])
+        kk_direct = check_direct(sum_mv)  # 方向を決める
+        kk_img = pg.transform.rotozoom(pg.image.load("fig/3.png"), kk_direct, 2.0)
         screen.blit(kk_img, kk_rct)
         bomb_rct.move_ip(vx,vy)
         screen.blit(bomb_img,bomb_rct)
