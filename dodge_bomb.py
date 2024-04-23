@@ -2,6 +2,7 @@ import os
 import random
 import sys
 import pygame as pg
+import time
 
 
 WIDTH, HEIGHT = 1600, 900
@@ -48,6 +49,25 @@ def check_direct(obj_direct:list) -> list[bool, bool]:
     return dir
 
 
+def end():
+    """
+    
+    """ 
+    screen = pg.display.set_mode((WIDTH, HEIGHT))
+    bg_img = pg.image.load("fig/pg_bg.jpg") 
+    screen.fill((0, 0, 0))
+    screen.set_alpha(128)
+    print("Game Over")
+    fonto = pg.font.Font(None, 80)
+    txt = fonto.render("Game Over", True, (255, 255, 255))
+    txt_rct = txt.get_rect(center = [WIDTH/2, HEIGHT/2])
+    screen.blit(txt, txt_rct)
+    
+    pg.display.update()
+    time.sleep(5)
+    return
+
+
 def main():
     pg.display.set_caption("逃げろ！こうかとん")
     screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -59,13 +79,14 @@ def main():
     kk_rct.center = 900, 400
     #ここから爆弾
     bomb_size = 10
-    bomb_img = pg.Surface((bomb_size, bomb_size))
+    bomb_img = pg.Surface((bomb_size*2, bomb_size*2))
     bomb_img.set_colorkey((0, 0, 0))
     pg.draw.circle(bomb_img, (255, 0, 0), (bomb_size, bomb_size), bomb_size)
     bomb_rct = bomb_img.get_rect()
     bomb_rct.center = random.randint(0,WIDTH), random.randint(0,HEIGHT)
     vx, vy = 5, 5
     direct = [0, 45, 90, 135, 180, 225, 270, 315]
+    saccs = [a for a in range(1, 11)]
     
 
     clock = pg.time.Clock()
@@ -78,13 +99,14 @@ def main():
     }
     while True:
         for event in pg.event.get():
-            if event.type == pg.QUIT: 
+            if event.type == pg.QUIT:
                 return
             
 
 
         if kk_rct.colliderect(bomb_rct):  # こうか㌧がぶつかったら
-            print("Game Over")
+
+            end()
             return
         
 
@@ -106,7 +128,10 @@ def main():
         if check_direct(sum_mv)[0] == 1:
             kk_img = pg.transform.flip(kk_img,True,False)
         screen.blit(kk_img, kk_rct)
+        #爆弾の処理
+        bomb_img = pg.Surface((bomb_size*2, bomb_size*2))
         pg.draw.circle(bomb_img, (255, 0, 0), (bomb_size, bomb_size), bomb_size)
+        bomb_img.set_colorkey((0, 0, 0))
         bomb_rct.move_ip(vx,vy)
         screen.blit(bomb_img,bomb_rct)
         yoko, tate = check_bound(bomb_rct)
